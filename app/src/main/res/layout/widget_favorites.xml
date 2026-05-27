@@ -45,8 +45,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
-        android:ellipsize="end"
-        android:maxLines="8"
         android:textColor="@color/textPrimary"
-        android:textSize="13sp" />
+        android:textSize="12sp"
+        android:lineSpacingExtra="2dp" />
 </LinearLayout>

@@ -21,7 +21,12 @@ object FavoritesWidgetRenderer {
         val error = FavoritesStore.loadError(context)
         appWidgetIds.forEach { appWidgetId ->
             val views = RemoteViews(context.packageName, R.layout.widget_favorites)
-            views.setTextViewText(R.id.widgetTimestamp, response?.timestamp ?: error ?: context.getString(R.string.loading))
+            views.setTextViewText(
+                R.id.widgetTimestamp,
+                response?.let { DisplayFormatting.relativeTimestamp(it.timestamp) }
+                    ?: error
+                    ?: context.getString(R.string.loading)
+            )
             views.setTextViewText(R.id.widgetItems, buildItemsText(context, response, error))
             views.setOnClickPendingIntent(R.id.widgetRefresh, refreshPendingIntent(context))
             views.setOnClickPendingIntent(R.id.widgetTitle, openAppPendingIntent(context))
@@ -31,11 +36,8 @@ object FavoritesWidgetRenderer {
 
     private fun buildItemsText(context: Context, response: FavoritesResponse?, error: String?): String {
         if (error != null && response == null) return error
-        val rows = response?.favorites.orEmpty()
-        if (rows.isEmpty()) return context.getString(R.string.widget_empty)
-        return rows.joinToString("\n\n") { row ->
-            "${row.line}  ${row.status}\n${row.subtitle}${if (row.nextStatus.isBlank()) "" else "\n${row.nextStatus}"}"
-        }
+        if (response?.favorites.isNullOrEmpty()) return context.getString(R.string.widget_empty)
+        return DisplayFormatting.widgetItemsText(response)
     }
 
     private fun refreshPendingIntent(context: Context): PendingIntent {

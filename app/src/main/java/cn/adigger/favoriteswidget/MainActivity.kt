@@ -47,7 +47,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun render(response: FavoritesResponse) {
-        binding.timestampText.text = "更新时间：${response.timestamp}"
+        binding.timestampText.text = DisplayFormatting.activityTimestamp(response.timestamp)
         adapter.submitList(response.favorites)
     }
 
