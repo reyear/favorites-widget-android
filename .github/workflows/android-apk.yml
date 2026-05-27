@@ -1,0 +1,43 @@
+name: build-android-apk
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [ main, master ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - name: Set up Android SDK
+        uses: android-actions/setup-android@v3
+
+      - name: Prepare Gradle wrapper
+        run: |
+          set -eux
+          curl -L -o gradle-8.7-bin.zip https://services.gradle.org/distributions/gradle-8.7-bin.zip
+          python3 - <<'PY'
+          import zipfile
+          with zipfile.ZipFile('gradle-8.7-bin.zip') as z:
+              z.extractall('.')
+          PY
+          chmod +x gradle-8.7/bin/gradle
+
+      - name: Build debug APK
+        run: ./gradle-8.7/bin/gradle assembleDebug
+
+      - name: Upload APK artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: favorites-widget-debug-apk
+          path: app/build/outputs/apk/debug/*.apk

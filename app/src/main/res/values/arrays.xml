@@ -1,0 +1,8 @@
+<resources>
+    <string-array name="sample_lines">
+        <item>951路</item>
+        <item>588路</item>
+        <item>857路</item>
+        <item>829路</item>
+    </string-array>
+</resources>
